@@ -1,0 +1,168 @@
+unlink(".RData")
+
+library(AICcmodavg)
+library(brms)
+library(gamlss)
+library(gamm4)
+library(lme4)
+library(MuMIn)
+
+setwd("/Users/simulador/Google Drive/L 2020 Julieta Rojas/Datos")
+setwd("/Users/simulador/Downloads")
+setwd("C:/Users/Julieta 2580/Google Drive/L 2020 Julieta Rojas/Datos")
+setwd("/Users/Edgar/Google\ Drive/Edgar/Trabajo/FC/Dirección\ de\ tesis/L\ 2020\ Julieta\ Rojas/Datos")
+setwd("/Users/edgarjgonzalezl/Google\ Drive/Edgar/Trabajo/FC/Dirección\ de\ tesis/L\ 2020\ Julieta\ Rojas/Datos")
+setwd("/Volumes/Google\ Drive/My\ Drive/Edgar/Trabajo/FC/Dirección\ de\ tesis/L\ 2020\ Julieta\ Rojas/Datos")
+datos <- read.csv("Datos_P_bradyi_1988-2019_210301.csv")
+x.mean <- mean(c(datos$size, datos$sizeNext), na.rm = TRUE)
+x.sd <- sd(c(datos$size, datos$sizeNext), na.rm = TRUE)
+datos <- transform(datos, 
+	size.s = (size-x.mean)/x.sd, 
+	sizeNext.s = (sizeNext-x.mean)/x.sd
+)
+
+datos3 <- (subset(x = datos, subset = retracted == 1))
+
+# modelo nulo generalizado mixto
+mod.glmer.r.0 <- gamm4(retractedNext ~ 1, random = ~ (1|Cactus)+(1|year)+(1|Plot), family = binomial, data = datos3)
+# AIC 532.48
+
+# LINEALES
+mod.glmer.r.11.11.11 <- glmer(retractedNext ~ size.s + (1+size.s|Cactus)+(1+size.s|year)+(1+size.s|Plot), family = binomial, data = datos3)
+# NO CONVERGE
+
+mod.glmer.r.01.11.11 <- glmer(retractedNext ~ size.s + (0+size.s|Cactus)+(1+size.s|year)+(1+size.s|Plot), family = binomial, data = datos3)
+# NO CONVERGE
+
+mod.glmer.r.11.01.11 <- glmer(retractedNext ~ size.s + (1+size.s|Cactus)+(0+size.s|year)+(1+size.s|Plot), family = binomial, data = datos3)
+# NO CONVERGE
+
+mod.glmer.r.11.11.01 <- glmer(retractedNext ~ size.s + (1+size.s|Cactus)+(1+size.s|year)+(0+size.s|Plot), family = binomial, data = datos3)
+# NO CONVERGE
+
+mod.glmer.r.10.11.11 <- glmer(retractedNext ~ size.s + (1|Cactus)+(1+size.s|year)+(1+size.s|Plot), family = binomial, data = datos3)
+# NO CONVERGE
+
+mod.glmer.r.11.10.11 <- glmer(retractedNext ~ size.s + (1+size.s|Cactus)+(1|year)+(1+size.s|Plot), family = binomial, data = datos3)
+# NO CONVERGE
+
+mod.glmer.r.11.11.10 <- glmer(retractedNext ~ size.s + (1+size.s|Cactus)+(1+size.s|year)+(1|Plot), family = binomial, data = datos3)
+# NO CONVERGE
+
+mod.glmer.r.00.11.11 <-  glmer(retractedNext ~ size.s + (1+size.s|year)+(1+size.s|Plot), data = datos3, family = binomial)
+# NO CONVERGE
+
+mod.glmer.r.11.00.11 <-  glmer(retractedNext ~ size.s + (1+size.s|Cactus)+(1+size.s|Plot), data = datos3, family = binomial)
+# NO CONVERGE
+
+mod.glmer.r.11.11.00 <-  glmer(retractedNext ~ size.s + (1+size.s|Cactus)+(1+size.s|year), data = datos3, family = binomial)
+# NO CONVERGE
+
+mod.glmer.r.01.01.11 <-  glmer(retractedNext ~ size.s + (0+size.s|Cactus)+(0+size.s|year)+(1+size.s|Plot), data = datos3, family = binomial) 
+# NO CONVERGE
+
+mod.glmer.r.11.01.01 <-  glmer(retractedNext ~ size.s + (1+size.s|Cactus)+(0+size.s|year)+(0+size.s|Plot), data = datos3, family = binomial)
+# NO CONVERGE
+
+mod.glmer.r.01.11.01 <-  glmer(retractedNext ~ size.s + (0+size.s|Cactus)+(1+size.s|year)+(0+size.s|Plot), data = datos3, family = binomial)
+# NO CONVERGE
+
+mod.glmer.r.10.10.11 <-  glmer(retractedNext ~ size.s + (1|Cactus)+(1|year)+(1+size.s|Plot), data = datos3, family = binomial)
+# NO CONVERGE
+
+mod.glmer.r.11.10.10 <-  glmer(retractedNext ~ size.s + (1+size.s|Cactus)+(1|year)+(1|Plot), data = datos3, family = binomial)
+# NO CONVERGE
+
+mod.glmer.r.10.11.10 <-  glmer(retractedNext ~ size.s + (1|Cactus)+(1+size.s|year)+(1|Plot), data = datos3, family = binomial)
+# 437.7
+
+mod.glmer.r.01.10.11 <-  glmer(retractedNext ~ size.s + (0+size.s|Cactus)+(1|year)+(1+size.s|Plot), data = datos3, family = binomial)
+# NO CONVERGE
+
+mod.glmer.r.01.11.10 <-  glmer(retractedNext ~ size.s + (0+size.s|Cactus)+(1+size.s|year)+(1|Plot), data = datos3, family = binomial)
+# NO CONVERGE
+
+mod.glmer.r.10.01.11 <-  glmer(retractedNext ~ size.s + (1|Cactus)+(0+size.s|year)+(1+size.s|Plot), data = datos3, family = binomial)
+# NO CONVERGE
+
+mod.glmer.r.11.01.10 <-  glmer(retractedNext ~ size.s + (1+size.s|Cactus)+(0+size.s|year)+(1|Plot), data = datos3, family = binomial)
+# NO CONVERGE
+
+mod.glmer.r.10.11.01 <-  glmer(retractedNext ~ size.s + (1|Cactus)+(1+size.s|year)+(0+size.s|Plot), data = datos3, family = binomial)
+# NO CONVERGE
+
+mod.glmer.r.11.10.01 <-  glmer(retractedNext ~ size.s + (1+size.s|Cactus)+(1|year)+(0+size.s|Plot), data = datos3, family = binomial)
+# NO CONVERGE
+
+# BACWARD 1
+mod.glmer.r.10.11.10 <-  glmer(retractedNext ~ size.s + (1|Cactus)+(1+size.s|year)+(1|Plot), data = datos3, family = binomial)
+# 437.7
+
+mod.glmer.r.00.11.10 <-  glmer(retractedNext ~ size.s + (1+size.s|year)+(1|Plot), data = datos3, family = binomial)
+# 435.7
+
+mod.glmer.r.00.11.00 <-  glmer(retractedNext ~ size.s + (1+size.s|year), data = datos3, family = binomial)
+# 433.72
+
+mod.glmer.r.00.10.00 <-  glmer(retractedNext ~ size.s + (1|year), data = datos3, family = binomial)
+# 429.81
+
+# NO LINEALES
+mod.gamer.r.11.11.11 <- gamm4(retractedNext ~ s(size.s, k = 4), random = ~(1+size.s|Cactus)+(1+size.s|year)+(1+size.s|Plot), family = binomial, data = datos3)
+# NO CONVERGE
+
+mod.gamer.r.01.11.11 <- gamm4(retractedNext ~ s(size.s, k = 4), random = ~(0+size.s|Cactus)+(1+size.s|year)+(1+size.s|Plot), family = binomial, data = datos3)
+# 443.28
+
+mod.gamer.r.11.01.11 <- gamm4(retractedNext ~ s(size.s, k = 4), random = ~(1+size.s|Cactus)+(0+size.s|year)+(1+size.s|Plot), family = binomial, data = datos3)
+# NO CONVERGE
+
+mod.gamer.r.11.11.01 <- gamm4(retractedNext ~ s(size.s, k = 4), random = ~(1+size.s|Cactus)+(1+size.s|year)+(0+size.s|Plot), family = binomial, data = datos3)
+# NO CONVERGE
+
+mod.gamer.r.10.11.11 <- gamm4(retractedNext ~ s(size.s, k = 4), random = ~(1|Cactus)+(1+size.s|year)+(1+size.s|Plot), family = binomial, data = datos3)
+# 443.28
+
+mod.gamer.r.11.10.11 <- gamm4(retractedNext ~ s(size.s, k = 4), random = ~(1+size.s|Cactus)+(1|year)+(1+size.s|Plot), family = binomial, data = datos3)
+# NO CONVERGE
+
+mod.gamer.r.11.11.10 <- gamm4(retractedNext ~ s(size.s, k = 4), random = ~(1+size.s|Cactus)+(1+size.s|year)+(1|Plot), family = binomial, data = datos3)
+# NO CONVERGE
+
+# BACKWARD 2
+mod.gamer.r.01.11.11 <- gamm4(retractedNext ~ s(size.s, k = 4), random = ~(0+size.s|Cactus)+(1+size.s|year)+(1+size.s|Plot), family = binomial, data = datos3)
+# 443.28
+
+mod.gamer.r.00.11.11 <- gamm4(retractedNext ~ s(size.s, k = 4), random = ~(1+size.s|year)+(1+size.s|Plot), family = binomial, data = datos3)
+# 441.28
+
+mod.gamer.r.00.11.10 <- gamm4(retractedNext ~ s(size.s, k = 4), random = ~(1+size.s|year)+(1|Plot), family = binomial, data = datos3)
+# 437.7
+
+mod.gamer.r.00.10.10 <- gamm4(retractedNext ~ s(size.s, k = 4), random = ~(1|year)+(1|Plot), family = binomial, data = datos3)
+# 433.79
+
+mod.gamer.r.00.10.00 <- gamm4(retractedNext ~ s(size.s, k = 4), random = ~(1|year), family = binomial, data = datos3)
+# 431.81
+
+mod.dr.best <- mod.glmer.r.00.10.00
+save(mod.dr.best, file = "mod.dr.best.Rdata")
+
+# GRAFICA
+x.pred<-seq(min(datos$size, na.rm = TRUE), max(datos$size, na.rm = TRUE), 0.1)
+x.cat <- seq(min(datos$size, na.rm = TRUE), max(datos$size, na.rm = TRUE), length.out = 21)
+num <- den <- rep(NA, 21)
+for (i in 1:nrow(datos))
+for(j in 1:20){
+	num[j] <- length(which(datos$size >= x.cat[j] & datos$size < x.cat[j+1] & datos$retracted == 1))
+		den[j] <- length(which(datos$size >= x.cat[j] & datos$size < x.cat[j+1]))
+	}
+	num[21] <- length(which(datos$size >= x.cat[20] & datos3$size <= x.cat[21] & datos$retracted == 1))
+den[21] <- length(which(datos$size >= x.cat[20] & datos$size <= x.cat[21]))
+prop <- num/den
+x.pred<-seq(min(datos3$size, na.rm = TRUE), max(datos3$size, na.rm = TRUE), 0.1)
+x.s.pred<-(x.pred-x.mean)/x.sd
+y.pred <- predict(mod.dr.best, newdata = data.frame (size.s = x.s.pred), type = "response", re.form = NA) 
+plot(datos3$size, datos3$retractedNext, las = 1, xlab = expression (paste("Ancho del cactus en el tiempo ", italic("t ") (mm))), ylab = "Probabilidad de desretracción", cex = 0.5, bty = "l", col = "gray")
+points(x.cat, prop, pch = 16)
+lines(x.pred, y.pred, col = "deeppink3", lwd = 2)

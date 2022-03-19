@@ -1,0 +1,33 @@
+unlink(".RData")
+
+library(AICcmodavg)
+library(brms)
+library(gamlss)
+library(gamm4)
+library(lme4)
+library(MuMIn)
+
+setwd("/Users/simulador/Google Drive/L 2020 Julieta Rojas/Datos")
+setwd("/Users/simulador/Downloads")
+setwd("C:/Users/Julieta 2580/Google Drive/L 2020 Julieta Rojas/Datos")
+setwd("/Users/Edgar/Google\ Drive/Edgar/Trabajo/FC/Dirección\ de\ tesis/L\ 2020\ Julieta\ Rojas/Datos")
+setwd("/Users/edgarjgonzalezl/Google\ Drive/Edgar/Trabajo/FC/Dirección\ de\ tesis/L\ 2020\ Julieta\ Rojas/Datos")
+datos <- read.csv("Datos_P_bradyi_1988-2019_210301.csv")
+x.mean <- mean(c(datos$size, datos$sizeNext), na.rm = TRUE)
+x.sd <- sd(c(datos$size, datos$sizeNext), na.rm = TRUE)
+datos <- transform(datos, 
+	size.s = (size-x.mean)/x.sd, 
+	sizeNext.s = (sizeNext-x.mean)/x.sd
+)
+size.recruits <- c()
+for(i in 1:length(unique(datos$Cactus))){
+datos.ind <- subset(datos, Cactus == unique (datos$Cactus)[i])
+if (datos.ind$year[1] != 1988)
+size.recruits <- c(size.recruits, datos.ind$sizeNext[1])
+}
+plot(density(log(size.recruits), na.rm = TRUE))
+size.recruits <- subset(size.recruits, is.na(size.recruits) == FALSE)
+km <- kmeans(log(size.recruits), 7) 
+size.recruits <- size.recruits[which(km$cluster == which(km$centers == min(km$centers)))]
+mod.C.best <- density(size.recruits)
+save(mod.C.best, file = "mod.C.best.Rdata")
